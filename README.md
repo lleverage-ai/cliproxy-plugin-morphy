@@ -31,7 +31,7 @@ Version 0.2.0 has a conservative subscription-auth posture because the current h
 
 ## Release contract
 
-The registry version has no leading `v`. Release tags are immutable `v<semver>` tags. Version `0.2.0` is published as tag `v0.2.0` with exactly:
+The registry version has no leading `v`. Release tags are immutable `v<semver>` tags. The release contract for version `0.2.0` is tag `v0.2.0` with exactly:
 
 - `morphy_0.2.0_linux_amd64.zip`
 - `morphy_0.2.0_linux_arm64.zip`
