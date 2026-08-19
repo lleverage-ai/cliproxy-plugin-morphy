@@ -1,0 +1,78 @@
+name: Registry Update
+
+# Keeps registry.json (and the README release contract) in sync with the
+# latest published stable release. Release publication is performed by the
+# Morphy repository's packaging workflow; this workflow only reacts to it.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: registry-update
+  cancel-in-progress: false
+
+jobs:
+  update-registry:
+    name: Point the registry at the released version
+    if: ${{ !github.event.release.draft && !github.event.release.prerelease }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Check out main
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+      - name: Update registry.json and README
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          stable = re.compile(r"^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
+          tag = os.environ["RELEASE_TAG"]
+          match = stable.fullmatch(tag)
+          if match is None:
+              print(f"ignoring non-stable release tag {tag!r}")
+              sys.exit(0)
+          new_version = tag.removeprefix("v")
+          new_tuple = tuple(map(int, match.groups()))
+
+          registry_path = Path("registry.json")
+          registry = json.loads(registry_path.read_text(encoding="utf-8"))
+          (entry,) = [item for item in registry["plugins"] if item["id"] == "morphy"]
+          current_version = entry["version"]
+          current_match = stable.fullmatch(f"v{current_version}")
+          if current_match is not None and tuple(map(int, current_match.groups())) >= new_tuple:
+              print(f"registry version {current_version} is not older than {new_version}; nothing to do")
+              sys.exit(0)
+
+          entry["version"] = new_version
+          registry_path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")
+
+          readme_path = Path("README.md")
+          readme = readme_path.read_text(encoding="utf-8")
+          readme_path.write_text(readme.replace(current_version, new_version), encoding="utf-8")
+          print(f"updated registry from {current_version} to {new_version}")
+          PY
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "no changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add registry.json README.md
+          git commit -m "chore: update registry to ${{ github.event.release.tag_name }}"
+          git push origin HEAD:main
