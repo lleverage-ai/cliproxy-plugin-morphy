@@ -6,7 +6,7 @@
       "name": "Morphy",
       "description": "Request-side token compression for supported CLIProxyAPI provider formats.",
       "author": "lleverage-ai",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "repository": "https://github.com/lleverage-ai/cliproxy-plugin-morphy",
       "homepage": "https://github.com/lleverage-ai/morphy",
       "license": "MIT",
