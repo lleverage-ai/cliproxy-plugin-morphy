@@ -27,17 +27,17 @@ Supported release platforms:
 
 CLIProxyAPI plugins are trusted native libraries loaded in process. Only install assets you trust. Morphy is mandatory fail-open: malformed input, unsupported formats, compression errors, and panics leave the request body unchanged; a configuration that sets `fail_open: false` is rejected while the prior configuration remains active. Authentication headers and credentials are not exposed to the plugin request-interceptor payload.
 
-Version 0.3.3 has a conservative subscription-auth posture because the current host metadata identifies the selected credential but not its authentication kind. Codex-format requests are passed through unchanged. Model-backed and embedding-heavy features are disabled: semantic cache is off, embeddings use the non-downloading hash backend, LLMLingua is off, and ACON uses its heuristic compressor.
+Version 0.3.4 has a conservative subscription-auth posture because the current host metadata identifies the selected credential but not its authentication kind. Codex-format requests are passed through unchanged. Model-backed and embedding-heavy features are disabled: semantic cache is off, embeddings use the non-downloading hash backend, LLMLingua is off, and ACON uses its heuristic compressor.
 
 ## Release contract
 
-The registry version has no leading `v`. Release tags are immutable `v<semver>` tags. The release contract for version `0.3.3` is tag `v0.3.3` with exactly:
+The registry version has no leading `v`. Release tags are immutable `v<semver>` tags. The release contract for version `0.3.4` is tag `v0.3.4` with exactly:
 
-- `morphy_0.3.3_linux_amd64.zip`
-- `morphy_0.3.3_linux_arm64.zip`
-- `morphy_0.3.3_darwin_amd64.zip`
-- `morphy_0.3.3_darwin_arm64.zip`
-- `morphy_0.3.3_windows_amd64.zip`
+- `morphy_0.3.4_linux_amd64.zip`
+- `morphy_0.3.4_linux_arm64.zip`
+- `morphy_0.3.4_darwin_amd64.zip`
+- `morphy_0.3.4_darwin_arm64.zip`
+- `morphy_0.3.4_windows_amd64.zip`
 - `checksums.txt`
 
 Each ZIP contains one platform library at its root (`morphy.so`, `morphy.dylib`, or `morphy.dll`). `checksums.txt` contains sorted SHA-256 entries for all five ZIPs.
